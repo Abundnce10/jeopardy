@@ -1,7 +1,7 @@
 var express = require('express'),
 	app = express(),
 	server = require('http').createServer(app),
-	questions = require('./JeopardyQuestions2012.json');
+	questions = require(__dirname + '/JeopardyQuestions2012.json');
 
 
 server.listen(process.env.PORT || 3000);
