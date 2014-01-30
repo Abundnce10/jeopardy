@@ -1,15 +1,202 @@
 <!DOCTYPE>
 <html>
 <head>
-	<title>Jeopardy 1 on 1</title>
+	<title>Jeopardy</title>
 	<link rel="stylesheet" type="text/css" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css"></link>
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 	<style>
-		
+		#wrapper {
+			width: 1000px;
+			margin: 20px auto 0 auto;
+			text-align: center;
+		}
+		#logo {
+			color: blue;
+			font-weight: bold;
+		}
+		.btn {
+			display: inline-block;
+		}
+		#correctGuess {
+			color: green;
+		}
+		#wrongGuess {
+			color: red;
+		}
+		a {
+			cursor: hand;
+		}
 	</style>
 </head>
 <body>
-	<h1>Hello World</h1>
+
+	<div id="wrapper">
+		<h1 id="logo">Jeopardy</h1>
+		<a id="play"><h3>Play!</h3></a>
+
+		<div id="questionContainer">
+			<h2 id="category"></h2>
+			<h4 id="value"></h4>
+			<h3 id="question"></h3>
+			<div id="questionButtons">
+				<div id="guess" class="btn"><h2>ANSWER</h2></div>
+				<div id="skipQuestion" class="btn"><h2>NEXT</h2></div>
+			</div>
+			<div id="answerContainer">
+				<input type="text" id="userAnswer" x-webkit-speech>
+				<input type="submit" id="submitAnswer">
+			</div>
+			<div id="guessResult">
+				<h2 id="questionAnswerContainer">A: <span id="questionAnswer"></span></h2>
+				<h2 id="correctGuess">Correct!</h2>
+				<h2 id="wrongGuess">Wrong!</h2>
+				<div id="nextQuestion" class="btn"><h2>NEXT</h2></div>
+			</div>
+		</div>
+
+	</div>
+
+	<script src="https://code.jquery.com/jquery-latest.min.js"></script>
+	<script>
+		jQuery(function($) {
+
+			// variables
+			var $questionContainer = $("#questionContainer"),
+				$play = $("#play"),
+				$category = $("#category"),
+				$value = $("#value"),
+				$question = $("#question"),
+				$guess = $("#guess"),
+				$questionButtons = $("#questionButtons"),
+				$skipQuestion = $("#skipQuestion"),
+				$answerContainer = $("#answerContainer"),
+				$userAnswer = $("#userAnswer"),
+				$submitAnswer = $("#submitAnswer"),
+				$questionAnswer = $("#questionAnswer"),
+				$questionAnswerContainer = $("#questionAnswerContainer"),
+				$correctGuess = $("#correctGuess"),
+				$wrongGuess = $("#wrongGuess"),
+				$nextQuestion = $("#nextQuestion");
+
+			var currentQuestionAnswer = '';
+
+			// initially hide
+			$questionContainer.hide();
+			$answerContainer.hide();
+			$questionAnswerContainer.hide();
+			$correctGuess.hide();
+			$wrongGuess.hide();
+			$nextQuestion.hide();
+
+
+
+			// begin game
+			$play.on("click", function(e) {
+				e.preventDefault();
+
+				$play.hide();
+				$questionContainer.show();
+
+
+				$nextQuestion.trigger("click");
+			});
+
+			$skipQuestion.on("click", function(e) {
+				e.preventDefault();
+
+				$nextQuestion.trigger("click");
+			})
+
+			// load new question
+			$nextQuestion.on("click", function(e) {
+				e.preventDefault();
+
+				$questionButtons.show();
+				$answerContainer.hide();
+				$correctGuess.hide();
+				$wrongGuess.hide();
+				$nextQuestion.hide();
+				$questionAnswerContainer.hide();
+
+				// reset
+				$userAnswer.val('');
+				$questionAnswer.text('');
+
+				// grab random question
+				$.getJSON('http://localhost:3000/question', function() {
+					
+				})
+				.done(function(data) {
+
+					console.log(data);
+
+					// update UI
+					$category.text(data.category);
+					$value.text(data.value);
+					$question.text(data.question);
+
+					$currentQuestionAnswer = data.answer;
+				});
+			});
+
+
+			// present answer box
+			$guess.on("click", function(e) {
+				e.preventDefault();
+
+				$questionButtons.hide();
+
+				$answerContainer.show();
+			});
+
+
+			// submit answer
+			$submitAnswer.on("click", function(e) {
+				e.preventDefault();
+
+				var userAnswer = $userAnswer.val();
+
+				$answerContainer.hide();
+
+
+				$questionAnswer.text($currentQuestionAnswer);
+				$questionAnswerContainer.show();
+
+				if (validateAnswer(userAnswer, $currentQuestionAnswer)) {
+					$correctGuess.show();
+				} else {
+					$wrongGuess.show();
+				}
+
+				$nextQuestion.show();
+
+
+			});
+
+			// detect if user hit the 'Enter' button after typing answer
+			$userAnswer.keypress(function (e) {
+			    if (e.keyCode == 13) {
+			        $submitAnswer.trigger("click");
+			    }
+			 });
+
+
+			function validateAnswer(userAnswer, answer) {
+				userAnswer = userAnswer.toLowerCase();
+				answer = answer.toLowerCase();
+
+				if (userAnswer == answer) {
+					return true
+				} else if (answer.indexOf(userAnswer) != -1) {
+					return true
+				} else {
+					return false
+				}
+			}
+
+
+		});
+	</script>
 </body>
 </html>
