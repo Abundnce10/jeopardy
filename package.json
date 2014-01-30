@@ -1,0 +1,21 @@
+{
+	"name": "jeopardy_1on1",
+	"version": "0.0.1",
+	"description": "1-on-1 Jeopardy",
+	"private": "true",
+	"script": {
+		"start": "nodemon app.js"
+	},
+	"dependencies": {
+		"socket.io": "0.9.16",
+		"express": "3.4.8"
+	},
+	"devDependencies": {
+		"nodemon": "*"	
+	},
+  	"engines": {
+    	"node": "0.10.x"
+  	},
+  	"author": "Abundnce10",
+  	"license": "MIT"
+}
